@@ -19,7 +19,20 @@ def calc_gini(data):
     """
     gini = 0.0
     ###########################################################################
-    # TODO: Implement the function.                                           #
+    labels = np.unique(data[:,-1])
+    print("labels:")
+    print(labels)
+    rows, columns = data.shape
+    num_of_examples = rows
+    sum = 0
+    
+    for label in labels:
+        labeled_data = data[np.where(data[:,-1] == label)]
+        rows, _ = labeled_data.shape
+        sum += ((rows / num_of_examples)**2)
+        print(sum)
+     
+    gini = 1 - sum                                           #
     ###########################################################################
     pass
     ###########################################################################
@@ -38,14 +51,38 @@ def calc_entropy(data):
     """
     entropy = 0.0
     ###########################################################################
-    # TODO: Implement the function.                                           #
-    ###########################################################################
-    pass
+    labels = np.unique(data[:,-1])
+    rows, columns = data.shape
+    num_of_examples = rows
+    
+    sum = 0
+    
+    for label in labels:
+        labeled_data = data[np.where(data[:,-1] == label)] 
+        rows, _ = labeled_data.shape
+        Si_over_S = rows / num_of_examples
+        sum += Si_over_S * (np.log2(Si_over_S))
+    
+    entropy = -sum
+                                        
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
     return entropy
 
+# calculates gain based on the impurity measure given
+def calc_gain(impurity_measure, data):
+    
+    gain = 0.0
+   
+    if impurity_measure == 'gini':
+        gain = calc_gini(data)
+    else:
+        gain = calc_entropy(data)
+        
+    return gain
+    
+    
 class DecisionNode:
 
     # This class will hold everything you require to construct a decision tree.
@@ -61,7 +98,7 @@ class DecisionNode:
         self.children.append(node)
 
 
-def build_tree(data, impurity):
+def build_tree(data, impurity_measure):
     """
     Build a tree using the given impurity measure and training dataset. 
     You are required to fully grow the tree until all leaves are pure. 
@@ -77,7 +114,25 @@ def build_tree(data, impurity):
     ###########################################################################
     # TODO: Implement the function.                                           #
     ###########################################################################
-    pass
+    
+    #initialize our queue to hold the entire data set
+    root = DecisionNode(data)
+    nodes_queue = queue.Queue()
+    nodes_queue.put(root)
+
+    #while there are items in our queue
+    while( ! nodes_queue.empty() )
+    
+        node = nodes_queue.get()
+        best_gain = node.impurity #start off the best gain as the current one
+        
+        for attribute in node.attributes
+            for threshold in thresholds
+                this_gain = node.impurity - calc_gain(node.data, impurity)
+                
+        if best_gain == node.impurity 
+           #if we didn't find any attribute+threshold that improves our gain - what to do?
+    
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
