@@ -21,9 +21,16 @@ def calc_gini(data):
     """
     gini = 0.0
     ###########################################################################
+    
+    if data.shape[0] <= 1:
+        print("data")
+        print(data)
+        print(type(data))
+        return gini
+    
     labels = np.unique(data[:,-1])
-    print("labels:")
-    print(labels)
+    #print("labels:")
+    #print(labels)
     rows, columns = data.shape
     num_of_examples = rows
     sum = 0
@@ -35,8 +42,7 @@ def calc_gini(data):
         print(sum)
      
     gini = 1 - sum                                           
-    ###########################################################################
-    pass
+   
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
@@ -53,6 +59,12 @@ def calc_entropy(data):
     """
     entropy = 0.0
     ###########################################################################
+    if data.shape[0] <= 1:
+        print("data")
+        print(data)
+        print(type(data))
+        return entropy
+    
     labels = np.unique(data[:,-1])
     rows, columns = data.shape
     num_of_examples = rows
@@ -128,19 +140,19 @@ def weighted_impurity(impurity_func, nun_instances_part, nun_instances_full, dat
         return (weight*part_impurity)
     
 # calculates gain based on the impurity measure given
-def calc_gain(impurity_func, atribute, data, TH, impurity_value_of_the_father):
+def calc_gain(impurity_func, attribute, data, TH, impurity_value_of_the_father):
      
-    #values = np.unique(data[:,atribute])
+    #values = np.unique(data[:,attribute])
     #labeled_data = data[np.where(data[:,-1] == label)] 
-    data_over_TH  = data[np.where(data[:,atribute].astype(int) > TH)] 
-    data_under_TH = data[np.where(data[:,atribute].astype(int) <= TH)] 
+    data_over_TH  = data[np.where(data[:,attribute].astype(int) > TH)] 
+    data_under_TH = data[np.where(data[:,attribute].astype(int) <= TH)] 
    
-    nun_instances_over_TH, _ = data_over_TH.shape
+    num_instances_over_TH, _ = data_over_TH.shape
     num_instances_under_TH, _ = data_under_TH.shape
     num_instances, _ = data.shape
     
-    weighted_impurity_over_TH = (weighted_impurity(impurity_func, nun_instances_over_TH, num_instances, data_over_TH))
-    weighted_impurity_under_TH = (weighted_impurity(impurity_func, nun_instances_under_TH, num_instances, data_under_TH))
+    weighted_impurity_over_TH = (weighted_impurity(impurity_func, num_instances_over_TH, num_instances, data_over_TH))
+    weighted_impurity_under_TH = (weighted_impurity(impurity_func, num_instances_under_TH, num_instances, data_under_TH))
     
     return (impurity_value_of_the_father - (weighted_impurity_over_TH + weighted_impurity_under_TH))
     
@@ -173,16 +185,24 @@ def build_tree(data, impurity):
         # TODO: we need to be able to set the feature and value of the ROOT NODE 
                 
         node = nodes_queue.get()
-        
+        node.data.shape[0]<=1:
+            print("STOP CONDITION REACHED 1")
+            print(len(node.data) == 0)
+            node.decision_node.set_class(node.data[0][-1])
+            continue
+            
         if node.impurity_of_node == 0: #stop condition
-                node.decision_node.set_class(node.data[0][-1]) 
-                continue
+            print("STOP CONDITION REACHED 2")
+            print(node.data.shape[0])
+            node.decision_node.set_class(node.data[0][-1]) 
+            continue
                 
         best_gain = node.impurity_of_node #start off the best gain as the current one
+        best_attribute = -1
+        best_threshold = -1
                 
-        child_left, child_right = None, None 
-        
-        num_attributes = data.shape[1]
+        #num_attributes = data.shape[1]
+        num_attributes = node.data.shape[1]
         
         #try splitting by each attribute at this node
         for attribute in range (num_attributes):
@@ -191,15 +211,18 @@ def build_tree(data, impurity):
                 thresholds = get_thresholds(node.data, attribute)
                 for threshold in thresholds:
 
-                    temp_child_left, temp_child_right = set_temp_children(attribute, threshold, data)
+                    this_gain = calc_gain(impurity, attribute, node.data, threshold, node.impurity_of_node)
 
-                    this_gain = node.impurity_of_node - (temp_child_left.impurity_of_node + temp_child_right.impurity_of_node)
-
-                    if this_gain < best_gain:
-
+                    if this_gain > best_gain:
+                        
                         best_gain = this_gain
-                        child_left, child_right = temp_child_left, temp_child_right 
+                        best_attribute = attribute
+                        best_threshold = threshold
        
+    
+        child_left, child_right = set_children(best_attribute, best_threshold, node.data, impurity)
+        
+        
         node.add_child(child_left)
         node.add_child(child_right)
          
@@ -211,26 +234,42 @@ def build_tree(data, impurity):
     ###########################################################################
     return root
  
-def set_temp_children(attribute, threshold, data):
+def set_children(attribute, threshold, data, impurity):
     """
-    sets two new, temporary child nodes for the current attribute, threshold and data
+    sets two new child nodes for a given attribute, threshold and data
     
     Input: attribute, threshold, data
     Output: two NodeExpansion nodes: one for values under the threshold and one above it.
     """         
-    temp_left_dn = DecisionNode(attribute, data[:,attribute].astype(int) <= threshold)
-    temp_right_dn = DecisionNode(attribute, data[:,attribute].astype(int) > threshold)
+    left_dn = DecisionNode(attribute, data[:,attribute].astype(int) <= threshold)
+    right_dn = DecisionNode(attribute, data[:,attribute].astype(int) > threshold)
     
-    temp_left_data = np.where(data[:,attribute].astype(int) >= threshold)
-    temp_right_data = np.where(data[:,attribute].astype(int) < threshold)
+    left_data = np.where(data[:,attribute].astype(int) >= threshold)
+    right_data = np.where(data[:,attribute].astype(int) < threshold)
+    
+     
+    if ((left_data.shape[0] <= 1) or (left_data.shape[1] <= 1)):
+        print("DATA IS LESS THAN 1")
+        left_impurity = 0
+    else: 
+        left_impurity = impurity(left_data)
 
-    temp_left_impurity = impurity(temp_left_data)
-    temp_right_impurity = impurity(temp_right_data)
+        
+    if ((right_data.shape[0] <= 1) or (right_data.shape[1] <= 1)):
+        print("DATA IS LESS THAN 1")
+        right_impurity = 0
+    else: 
+        right_impurity = impurity(right_data)
     
-    temp_child_left = NodeExpansion(temp_left_dn, temp_left_data, temp_left_impurity)
-    temp_child_right = NodeExpansion(temp_right_dn, temp_right_data, temp_right_impurity)
+    
+    if ((left_impurity == 0) or (right_impurity == 0)):
+        print("STOP CONDITION REACHED 3")
+        print(node.data.shape)
+   
+    child_left = NodeExpansion(left_dn, left_impurity, left_data)
+    child_right = NodeExpansion(right_dn, right_impurity, right_data)
                 
-    return temp_child_left, temp_child_right
+    return child_left, child_right
                 
 def get_thresholds(data, attribute):
     """
@@ -240,13 +279,13 @@ def get_thresholds(data, attribute):
     Input: data and attribute
     Output: array of thresholds for deciding on this attribute
     """
-    print(data)
+   # print(data)
     values = np.unique(data[:,attribute])
-    print(values)
+    #print(values)
     avarage = ((np.append ([values],[0])) + (np.append([0],[values])))/2 
-    print(avarage)
+   # print(avarage)
     avarage = np.delete(avarage, 0)
-    print(avarage)
+  #  print(avarage)
     thresholds = np.delete(avarage, -1)
     
     # TODO: Implement the function.  
