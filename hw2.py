@@ -182,8 +182,10 @@ def build_tree(data, impurity):
                 
         child_left, child_right = None, None 
         
+        num_attributes = data.shape[1]
+        
         #try splitting by each attribute at this node
-        for attribute in node.attributes:
+        for attribute in range (num_attributes):
                 
                 #for each attribute test each threshold
                 thresholds = get_thresholds(node.data, attribute)
