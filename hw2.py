@@ -10,7 +10,9 @@ chi_table = {0.01  : 6.635,
              0.0001 : 15.140,
              0.00001: 19.511}
 
+
 def calc_gini(data):
+
     """
     Calculate gini impurity measure of a dataset.
 
@@ -34,8 +36,8 @@ def calc_gini(data):
         raise Exception
 
     labels = np.unique(data[:,-1])
-    #print("labels:")
-    #print(labels)
+    # print("labels:")
+    # print(labels)
     rows, columns = data.shape
     num_of_examples = rows
     sum = 0
@@ -44,7 +46,7 @@ def calc_gini(data):
         labeled_data = data[np.where(data[:,-1] == label)]
         rows, _ = labeled_data.shape
         sum += ((rows / num_of_examples)**2)
-        #print(sum)
+        # print(sum)
 
     gini = 1 - sum
 
@@ -106,7 +108,6 @@ class DecisionNode:
     # functionality as described in the notebook. It is highly recommended that you
     # first read and understand the entire exercise before diving into this class.
 
-
     def __init__(self, feature, value):
         self.feature = feature # column index of criteria being tested
         self.value = value # value necessary to get a true result. the may be a function (boolean state X>Y)
@@ -118,23 +119,22 @@ class DecisionNode:
         def __init__(self):
             self.string = "No Child fits this instance!"
 
-
     def add_child(self, node):
         self.children.append(node)
 
-    def set_as_root():
+    def set_as_root(self):
         self.is_root = True
 
     def set_class(self, label):
         self.label = label
 
-    def make_desicion(self, instance):
-        if (len(self.children) is 0):
+    def make_decision(self, instance):
+        if len(self.children) is 0:
             return self.label
 
         for child in self.children:
-            if (child.value(instance[child.feature])):
-                return (child.make_desicion(instance))
+            if child.value(instance[child.feature]):
+                return child.make_desicion(instance)
 
         print("No Child fits this instance")
         raise DecisionError
@@ -150,10 +150,10 @@ def weighted_impurity(impurity_func, nun_instances_part, nun_instances_full, dat
 # calculates gain based on the impurity measure given
 def calc_gain(impurity_func, attribute, data, TH, impurity_value_of_the_father):
 
-    #values = np.unique(data[:,attribute])
-    #labeled_data = data[np.where(data[:,-1] == label)]
-    data_over_TH  = data[np.where(data[:,attribute].astype(int) > TH)]
-    data_under_TH = data[np.where(data[:,attribute].astype(int) <= TH)]
+    # values = np.unique(data[:,attribute])
+    # labeled_data = data[np.where(data[:,-1] == label)]
+    data_over_TH = data[np.where(data[:, attribute].astype(int) > TH)]
+    data_under_TH = data[np.where(data[:, attribute].astype(int) <= TH)]
 
     if ((data_over_TH.shape[0] < 1) or (data_over_TH.shape[1] < 1)):
         print("data_over_TH empty! TH=")
@@ -174,7 +174,7 @@ def calc_gain(impurity_func, attribute, data, TH, impurity_value_of_the_father):
     weighted_impurity_over_TH = (weighted_impurity(impurity_func, num_instances_over_TH, num_instances, data_over_TH))
     weighted_impurity_under_TH = (weighted_impurity(impurity_func, num_instances_under_TH, num_instances, data_under_TH))
 
-    return (impurity_value_of_the_father - (weighted_impurity_over_TH + weighted_impurity_under_TH))
+    return impurity_value_of_the_father - (weighted_impurity_over_TH + weighted_impurity_under_TH)
 
 
 def build_tree(data, impurity):
@@ -194,12 +194,12 @@ def build_tree(data, impurity):
     # TODO: Implement the function.                                           #
     ###########################################################################
 
-    #initialize our queue to hold the root node
+    # initialize our queue to hold the root node
     # TODO: set our root node (set_as_root), and set its value and feature
     nodes_queue = queue.Queue()
     nodes_queue.put(NodeExpansion(DecisionNode(None, None), impurity(data), data))
 
-    #while there are items in our queue
+    # while there are items in our queue
     while not nodes_queue.empty():
 
         # TODO: we need to be able to set the feature and value of the ROOT NODE
@@ -217,17 +217,17 @@ def build_tree(data, impurity):
             node.decision_node.set_class(node.data[0][-1])
             continue
 
-        best_gain = 0#node.impurity_of_node #start off the best gain as the current one
+        best_gain = 0
         best_attribute = 0
         best_threshold = 0
 
-        #num_attributes = data.shape[1]
+        # num_attributes = data.shape[1]
         num_attributes = node.data.shape[1]
 
-        #try splitting by each attribute at this node
+        # try splitting by each attribute at this node
         for attribute in range (num_attributes):
 
-                #for each attribute test each threshold
+                # for each attribute test each threshold
                 thresholds = get_thresholds(node.data, attribute)
                 for threshold in thresholds:
 
@@ -239,20 +239,19 @@ def build_tree(data, impurity):
                         best_attribute = attribute
                         best_threshold = threshold
 
-
         print("Got here!")
         print("best_attribute: %d" %(best_attribute))
         print("best_threshold: %d" %(best_threshold))
 
         child_left, child_right = set_children(best_attribute, best_threshold, node.data, impurity)
 
-        if (child_left is not None):
+        if child_left is not None:
             node.decision_node.add_child(child_left)
             nodes_queue.put(child_left)
             print("Adding child_left:")
             print(child_left)
 
-        if (child_right is not None):
+        if child_right is not None:
             node.decision_node.add_child(child_right)
             nodes_queue.put(child_right)
             print("Adding child_right:")
@@ -262,6 +261,7 @@ def build_tree(data, impurity):
     #                             END OF YOUR CODE                            #
     ###########################################################################
     return root
+
 
 def set_children(nodes_queue, parent_node, attribute, threshold, data, impurity):
     """
@@ -279,49 +279,36 @@ def set_children(nodes_queue, parent_node, attribute, threshold, data, impurity)
     left_data = data[np.where(data[:,attribute].astype(int) >= threshold)]
     right_data = data[np.where(data[:,attribute].astype(int) < threshold)]
 
-
     print("set_children 3")
-    print (type(data))
-    print (data.shape)
-    print ((left_data))
-    print ((right_data))
-    if ((left_data.shape[0] < 1) or (left_data.shape[1] < 1)):
-        print("DATA IS LESS THAN 1")
-        left_impurity = 0
-        return (None, None)
-    else:
-        left_impurity = impurity(left_data)
+    print(type(data))
+    print(data.shape)
+    print(left_data)
+    print(right_data)
 
     print("set_children 4")
-    if ((right_data.shape[0] < 1) or (right_data.shape[1] < 1)):
+    if (left_data.shape[0] < 1) or (left_data.shape[1] < 1):
         print("DATA IS LESS THAN 1")
-        right_impurity = 0
-        return (None, None)
-    else:
+        return None, None
 
-        right_impurity = impurity(right_data)
-        left_impurity = impurity(left_data)
+    if (right_data.shape[0] < 1) or (right_data.shape[1] < 1):
+        print("DATA IS LESS THAN 1")
+        return None, None
 
-        child_left = NodeExpansion(left_dn, left_impurity, left_data)
-        child_right = NodeExpansion(right_dn, right_impurity, right_data)
-
-        nodes_queue.put(child_left)
-        nodes_queue.put(child_right)
-
-    parent_node.add_child(child_left)
-    parent_node.add_child(child_right)
-
+    right_impurity = impurity(right_data)
+    left_impurity = impurity(left_data)
 
     print("set_children 5")
-    if ((left_impurity == 0) or (right_impurity == 0)):
+    if (left_impurity == 0) or (right_impurity == 0):
         print("STOP CONDITION REACHED 3")
-        #print(node.data.shape)
+        # print(node.data.shape)
 
     print("set_children 6")
+
     child_left = NodeExpansion(left_dn, left_impurity, left_data)
     child_right = NodeExpansion(right_dn, right_impurity, right_data)
 
     return child_left, child_right
+
 
 def get_thresholds(data, attribute):
     """
