@@ -1,5 +1,6 @@
 
 import numpy as np
+
 np.random.seed(42)
 
 chi_table = {0.01  : 6.635,
@@ -144,14 +145,14 @@ def calc_gain(impurity_func, atribute, data, TH, impurity_value_of_the_father):
     return (impurity_value_of_the_father - (weighted_impurity_over_TH + weighted_impurity_under_TH))
     
                 
-def build_tree(data, impurity_handler):
+def build_tree(data, impurity):
     """
     Build a tree using the given impurity measure and training dataset. 
     You are required to fully grow the tree until all leaves are pure. 
 
     Input:
     - data: the training dataset.
-    - impurity_handler: the chosen impurity measure. Notice that you can send a function
+    - impurity: the chosen impurity measure. Notice that you can send a function
                 as an argument in python.
 
     Output: the root node of the tree.
@@ -164,7 +165,7 @@ def build_tree(data, impurity_handler):
     #initialize our queue to hold the root node
     # TODO: set our root node (set_as_root), and set its value and feature
     nodes_queue = queue.Queue()
-    nodes_queue.put(NodeExpansion(DecisionNode(None, None), impurity_handler(data), data))
+    nodes_queue.put(NodeExpansion(DecisionNode(None, None), impurity(data), data))
 
     #while there are items in our queue
     while( not nodes_queue.empty() ):
@@ -221,8 +222,8 @@ def set_temp_children(attribute, threshold, data):
     temp_left_data = np.where(data[:,attribute].astype(int) >= threshold)
     temp_right_data = np.where(data[:,attribute].astype(int) < threshold)
 
-    temp_left_impurity = impurity_handler(temp_left_data)
-    temp_right_impurity = impurity_handler(temp_right_data)
+    temp_left_impurity = impurity(temp_left_data)
+    temp_right_impurity = impurity(temp_right_data)
     
     temp_child_left = NodeExpansion(temp_left_dn, temp_left_data, temp_left_impurity)
     temp_child_right = NodeExpansion(temp_right_dn, temp_right_data, temp_right_impurity)
