@@ -23,13 +23,14 @@ def calc_gini(data):
     ###########################################################################
     
     if data.shape[0] == 1:
-        print("calc_gini: data")
-        print(data)
-        print(type(data))
+#         print("calc_gini: data.shape")
+#         print(data.shape)
+#         #print(type(data))
         return gini
     if data.shape[0] < 1:
-        print("calc_gini: data")
-        print(data)
+        print("calc_gini: data.shape")
+        print(data.shape)
+        #print(data)
         print(type(data))
         raise Exception
         
@@ -64,11 +65,13 @@ def calc_entropy(data):
     """
     entropy = 0.0
     ###########################################################################
-    if data.shape[0] <= 1:
-        print("calc_entropy: data ")
-        print(data)
-        print(type(data))
+    if data.shape[0] == 1:
+#         print("calc_entropy: data ")
+#         print(data)
+#         print(type(data))
         return entropy
+    if data.shape[0] < 1:
+        raise Exception
     
     labels = np.unique(data[:,-1])
     rows, columns = data.shape
@@ -152,18 +155,24 @@ def calc_gain(impurity_func, attribute, data, TH, impurity_value_of_the_father):
      
     #values = np.unique(data[:,attribute])
     #labeled_data = data[np.where(data[:,-1] == label)] 
-    data_over_TH  = data[np.where(data[:,attribute].astype(int) > TH)] 
-    data_under_TH = data[np.where(data[:,attribute].astype(int) <= TH)] 
+    data_over_TH  = data[np.where(data[:,attribute].astype(float) > TH)] 
+    data_under_TH = data[np.where(data[:,attribute].astype(float) <= TH)] 
    
     if ((data_over_TH.shape[0] < 1) or (data_over_TH.shape[1] < 1)):
-        print("data_over_TH empty! TH=")
+        print("data_over_TH empty! TH= data=")
         print(TH)
+        print(np.sort(data[:,attribute]))
+        print(data_under_TH.shape)
+        print(data_over_TH.shape)
         raise Exception
         return 0
     
     if ((data_under_TH.shape[0] < 1) or (data_under_TH.shape[1] < 1)):
-        print("data_under_TH empty! TH=")
+        print("data_under_TH empty! TH= data=")
         print(TH)
+        print(np.sort(data[:,attribute]))
+        print(data_under_TH.shape)
+        print(data_over_TH.shape)
         raise Exception
         return 0
     
@@ -330,11 +339,11 @@ def get_thresholds(data, attribute):
     thresholds = np.delete(avarage, -1)
     
     # TODO: Implement the function.  
-    print("values:")
-    print(values)
+    #print("values:")
+    #print(values)
     
-    print("thresholds:")
-    print(thresholds)
+    #print("thresholds:")
+    #print(thresholds)
     return thresholds
 
     
