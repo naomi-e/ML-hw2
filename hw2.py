@@ -180,12 +180,13 @@ def build_tree(data, impurity):
     nodes_queue.put(NodeExpansion(DecisionNode(None, None), impurity(data), data))
 
     #while there are items in our queue
-    while( not nodes_queue.empty() ):
+    while not nodes_queue.empty():
         
         # TODO: we need to be able to set the feature and value of the ROOT NODE 
                 
         node = nodes_queue.get()
-        node.data.shape[0]<=1:
+        
+        if node.data.shape[0]<=1:
             print("STOP CONDITION REACHED 1")
             print(len(node.data) == 0)
             node.decision_node.set_class(node.data[0][-1])
@@ -197,7 +198,7 @@ def build_tree(data, impurity):
             node.decision_node.set_class(node.data[0][-1]) 
             continue
                 
-        best_gain = node.impurity_of_node #start off the best gain as the current one
+        best_gain = -1 
         best_attribute = -1
         best_threshold = -1
                 
@@ -219,57 +220,78 @@ def build_tree(data, impurity):
                         best_attribute = attribute
                         best_threshold = threshold
        
-    
-        child_left, child_right = set_children(best_attribute, best_threshold, node.data, impurity)
+        set_children(nodes_queue, node, best_attribute, best_threshold, node.data, impurity)
         
-        
-        node.add_child(child_left)
-        node.add_child(child_right)
-         
-        nodes_queue.put(child_left)
-        nodes_queue.put(child_right)
     
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
     return root
  
-def set_children(attribute, threshold, data, impurity):
+def set_children(nodes_queue, parent_node, attribute, threshold, data, impurity):
     """
     sets two new child nodes for a given attribute, threshold and data
     
     Input: attribute, threshold, data
-    Output: two NodeExpansion nodes: one for values under the threshold and one above it.
-    """         
-    left_dn = DecisionNode(attribute, data[:,attribute].astype(int) <= threshold)
-    right_dn = DecisionNode(attribute, data[:,attribute].astype(int) > threshold)
+    Sets two new children for the parent and adds them to the queue
+    """
+
     
     left_data = np.where(data[:,attribute].astype(int) >= threshold)
     right_data = np.where(data[:,attribute].astype(int) < threshold)
     
-     
-    if ((left_data.shape[0] <= 1) or (left_data.shape[1] <= 1)):
-        print("DATA IS LESS THAN 1")
-        left_impurity = 0
-    else: 
-        left_impurity = impurity(left_data)
-
+    ### CASE 1 : no reason to add them to the queue, since they do not improve things
+    
+    if ((left_data.shape[0] < 1) or (right_data.shape[1] < 1)):
         
-    if ((right_data.shape[0] <= 1) or (right_data.shape[1] <= 1)):
-        print("DATA IS LESS THAN 1")
-        right_impurity = 0
-    else: 
-        right_impurity = impurity(right_data)
-    
-    
-    if ((left_impurity == 0) or (right_impurity == 0)):
-        print("STOP CONDITION REACHED 3")
-        print(node.data.shape)
-   
-    child_left = NodeExpansion(left_dn, left_impurity, left_data)
-    child_right = NodeExpansion(right_dn, right_impurity, right_data)
+        #this means that there is no reason to split here. set the parent node's class and gtfo
+        parent_node.decision_node.set_class(parent_node.data[0][-1])
+        return
                 
-    return child_left, child_right
+    left_dn = DecisionNode(attribute, left_data)
+    right_dn = DecisionNode(attribute, right_data)
+    
+    ### CASE 2 : one of the nodes shouldn't be added to queue, since it has one data item - set as leaf
+
+    if left_data.shape[0] == 1:
+       
+        # don't insert this node to the queue
+        left_impurity = 0
+        left_dn.set_class(left_data[0][-1])
+        child_left = NodeExpansion(left_dn, left_impurity, left_data)
+        
+        right_impurity = impurity(right_data)
+        child_right = NodeExpansion(right_dn, right_impurity, right_data)
+        
+        nodes_queue.put(child_right)
+    
+    elif right_data.shape[0] == 1:
+        
+        # don't insert this node to the queue
+        right_impurity = 0
+        right_dn.set_class(right_data[0][-1])
+        child_left = NodeExpansion(right_dn, right_impurity, right_data)
+        
+        left_impurity = impurity(left_data)
+        child_left = NodeExpansion(left_dn, left_impurity, left_data)
+        
+        nodes_queue.put(child_left)
+        
+    else: 
+        
+        right_impurity = impurity(right_data)
+        left_impurity = impurity(left_data)
+     
+        child_left = NodeExpansion(left_dn, left_impurity, left_data)
+        child_right = NodeExpansion(right_dn, right_impurity, right_data)
+             
+        nodes_queue.put(child_left)
+        nodes_queue.put(child_right)
+    
+    parent_node.add_child(child_left)
+    parent_node.add_child(child_right)
+
+    
                 
 def get_thresholds(data, attribute):
     """
