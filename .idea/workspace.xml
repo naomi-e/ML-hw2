@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="58167f78-660b-4780-a93f-e21a485081aa" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/other.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/hwa2-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/hwa2-checkpoint.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hw2.py" beforeDir="false" afterPath="$PROJECT_DIR$/hw2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hwa2.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/hwa2.ipynb" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,8 +20,8 @@
       <file leaf-file-name="hw2.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/hw2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="378">
-              <caret line="302" column="32" lean-forward="true" selection-start-line="302" selection-start-column="32" selection-end-line="302" selection-end-column="32" />
+            <state relative-caret-position="474">
+              <caret line="291" column="15" selection-start-line="291" selection-start-column="15" selection-end-line="291" selection-end-column="15" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -125,30 +127,20 @@
     </task>
     <servers />
   </component>
-  <component name="TodoView">
-    <todo-panel id="selected-file">
-      <is-autoscroll-to-source value="true" />
-    </todo-panel>
-    <todo-panel id="all">
-      <are-packages-shown value="true" />
-      <is-autoscroll-to-source value="true" />
-    </todo-panel>
-  </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1680" height="1027" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49940476" weight="0.32948583" />
-      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.5005952" side_tool="true" visible="true" weight="0.32948583" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.50238097" side_tool="true" visible="true" weight="0.32948583" />
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Version Control" order="8" sideWeight="0.49940476" visible="true" weight="0.32948583" />
-      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.49702382" weight="0.32948583" />
+      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info anchor="bottom" id="Python Console" order="10" sideWeight="0.49761903" visible="true" weight="0.32948583" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Terminal" order="11" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15357143" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="3" />
-      <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="right" id="SciView" order="4" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -160,20 +152,11 @@
       <window_info anchor="right" x="0" y="0" width="370" height="827" id="Documentation" order="5" side_tool="true" weight="0.3297619" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
-  </component>
-  <component name="Vcs.Log.History.Properties">
-    <option name="COLUMN_ORDER">
-      <list>
-        <option value="0" />
-        <option value="2" />
-        <option value="3" />
-        <option value="1" />
-      </list>
-    </option>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -205,8 +188,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/hw2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="302" column="32" lean-forward="true" selection-start-line="302" selection-start-column="32" selection-end-line="302" selection-end-column="32" />
+        <state relative-caret-position="474">
+          <caret line="291" column="15" selection-start-line="291" selection-start-column="15" selection-end-line="291" selection-end-column="15" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
